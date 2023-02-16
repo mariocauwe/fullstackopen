@@ -1,22 +1,37 @@
-import { useState } from 'react'
+import axios, { Axios } from 'axios'
+import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import NewPersonForm from './components/NewPersonForm'
 import Persons from './components/Persons'
 
 const App = () => {
   console.log("rerender");
-  const [persons, setPersons] = useState([
+  /*const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
     { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
     { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
     { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])
+  ])*/
+
+  const [persons, setPersons] = useState([])
   const [filteredPersons, setFilteredPersons] = useState(persons)
 
   const [newPerson, setNewPerson] = useState({name:'',phone:''})
   
   const [filter, setFilter] = useState('')
-  
+  const localServer = "http://localhost:3001/persons"
+
+  useEffect( () => {
+    console.log("calling db with axios");
+    axios.get(localServer).then( response => {
+        console.log("db called returned", response.data);
+        setPersons(response.data)
+        setFilteredPersons(response.data)
+      }
+      )
+    }
+  ,[])
+
   const addPerson = (e) => {
     console.log("addPerson")
     e.preventDefault()

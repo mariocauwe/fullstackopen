@@ -1,9 +1,8 @@
 const Persons = (props) => {
-    console.log("rerender persons");
     return (
         <ul>
-         { props.filteredPersons.map(person => <li key={person.id}>{person.name} {person.number}</li>) }
-         </ul>
+             { props.filteredPersons.map(person => <li key={person.id}>{person.name} {person.number}</li>) }
+        </ul>
     )
 }
 
