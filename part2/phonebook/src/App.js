@@ -1,61 +1,55 @@
-import axios, { Axios } from 'axios'
 import { useEffect, useState } from 'react'
 import Filter from './components/Filter'
 import NewPersonForm from './components/NewPersonForm'
 import Persons from './components/Persons'
+import  DbService from './services/dbService' 
 
 const App = () => {
-  console.log("rerender");
-  /*const [persons, setPersons] = useState([
-    { name: 'Arto Hellas', number: '040-123456', id: 1 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
-  ])*/
+  console.log("re-render");
 
   const [persons, setPersons] = useState([])
   const [filteredPersons, setFilteredPersons] = useState(persons)
 
-  const [newPerson, setNewPerson] = useState({name:'',phone:''})
+  const [newPerson, setNewPerson] = useState({name:'',number:''})
   
   const [filter, setFilter] = useState('')
-  const localServer = "http://localhost:3001/persons"
 
-  useEffect( () => {
-    console.log("calling db with axios");
-    axios.get(localServer).then( response => {
-        console.log("db called returned", response.data);
-        setPersons(response.data)
-        setFilteredPersons(response.data)
-      }
-      )
+
+  const reloadPeople = () => {
+    console.log("loading people from db with axios");
+    DbService.loadPeople().then( response => {
+        console.log("db called returned", response);
+        setPersons(response)
+        setFilteredPersons(response)
+      } )
     }
-  ,[])
 
   const addPerson = (e) => {
     console.log("addPerson")
     e.preventDefault()
     if(newPerson.name.length===0) return
  
-    if(persons.find(person => person.name===newPerson.name)) {
-      console.log("addPerson", newPerson.name, "is already in the phonebook.")
-      alert(`${newPerson.name} is already in the phonebook.`)
+    var p = persons.find(person => person.name===newPerson.name)
+    if(p!==undefined) {
+      if(window.confirm(`${newPerson.name} is already in the phonebook. Replace the old number?`)) {
+        DbService.updateNumber({...p, number:newPerson.number})
+      }
       return
     }
-    setPersons(persons.concat({name: newPerson.name, number: newPerson.phone, id:persons.length+1}))
-   // setFilteredPersons(persons.filter(person => {
- //     console.log("updating filteredpersons list");
-   //   return person.name.toLowerCase().includes(filter.toLowerCase())
-   //   }))
-     // setFilteredPersons(persons)
-    setNewPerson({name:'',phone:''})
+    DbService.savePerson(newPerson)
+      .then(response => {
+        console.log(response);
+        setPersons(persons.concat(newPerson))
+      }
+      )
+    setNewPerson({name:'',number:''})
   }
 
   const handleNameChange = (e) => {
-    setNewPerson({name:e.target.value, phone:newPerson.phone})
+    setNewPerson({name:e.target.value, number:newPerson.phone})
   }
   const handlePhoneChange = (e) => {
-    setNewPerson({name:newPerson.name, phone:e.target.value})
+    setNewPerson({name:newPerson.name, number:e.target.value})
   }
 
   const search = (e) => {
@@ -63,6 +57,17 @@ const App = () => {
     setFilter(e.target.value)
     setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(e.target.value.toLowerCase())))
   }
+
+  const removePerson = (e) => {
+    console.log("removePerson execution",e.target.value)
+    const p = filteredPersons.find(person => person.id==e.target.value)
+    if(p!==undefined && window.confirm(`Are you sure te remove ${p.name}?`)) {
+      console.log("Ok to delete person")
+      DbService.removePerson(e.target.value)
+    }
+  }
+
+  useEffect( reloadPeople ,[])
 
   return (
     <div>
@@ -73,7 +78,7 @@ const App = () => {
       <NewPersonForm name={newPerson.name} phone={newPerson.phone} nameChange={handleNameChange} phoneChange={handlePhoneChange} onSubmit={addPerson}/>
 
       <h2>Numbers</h2>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} removePerson={removePerson}/>
     </div>
   )
 }
