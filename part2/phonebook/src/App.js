@@ -26,16 +26,18 @@ const App = () => {
   const REMOVEFAIL = " remove failed"
 
   const updateNotification = (message,isError) => {
-    console.log("update notification",message)
     setNotification({message,isError})
     setTimeout( () => setNotification({message:null,isError:false}),10000)
   }
   const reloadPeople = () => {
-    console.log("loading people from db with axios");
+    console.log("reloadPeople from db")
     DbService.loadPeople().then( response => {
-        console.log("db called returned", response);
+        console.log("reloadPeople db called returned", response);
         setPersons(response)
-        setFilteredPersons(response)
+        if(filter)
+          setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
+        else
+          setFilteredPersons(persons)
       } )
     }
 
@@ -51,6 +53,7 @@ const App = () => {
       .then(response => {
           console.log("response from update",response)
           updateNotification(newPerson.name + UPDATESUCCESS,false)
+          reloadPeople()
         })
       .catch( error => {
             updateNotification(newPerson.name + UPDATEFAIL,true)
@@ -61,7 +64,7 @@ const App = () => {
       DbService.savePerson(newPerson)
         .then(response => {
           updateNotification(newPerson.name + ADDSUCCESS,false)
-          setPersons(persons.concat(newPerson))
+          reloadPeople()
         })
         .catch(error => {
           updateNotification(newPerson.name + ADDFAIL,true)
@@ -79,7 +82,7 @@ const App = () => {
         .then(response => {
           console.log("app then remove", response)
           updateNotification(p.name + REMOVESUCCESS,false)
-          //setPersons(persons. concat(newPerson))
+          reloadPeople()
         })
         .catch(error => {   
           console.log("app catch remove", error)
@@ -95,7 +98,7 @@ const App = () => {
   }
 
   const handleNameChange = (e) => {
-    setNewPerson({name:e.target.value, number:newPerson.phone})
+    setNewPerson({name:e.target.value, number:newPerson.number})
   }
   const handlePhoneChange = (e) => {
     setNewPerson({name:newPerson.name, number:e.target.value})
@@ -110,7 +113,7 @@ const App = () => {
       <Filter filter={filter} search={search} />
    
       <h2>Add new</h2>
-      <NewPersonForm name={newPerson.name} phone={newPerson.phone} nameChange={handleNameChange} phoneChange={handlePhoneChange} onSubmit={addPerson}/>
+      <NewPersonForm name={newPerson.name} phone={newPerson.number} nameChange={handleNameChange} phoneChange={handlePhoneChange} onSubmit={addPerson}/>
 
       <h2>Numbers</h2>
       <Persons filteredPersons={filteredPersons} removePerson={removePerson}/>
