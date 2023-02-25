@@ -4,15 +4,16 @@ const localServer = "http://localhost:3001/persons"
 
 const savePerson = newPerson => {
     console.log("dbService.addPerson");
-    return axios
-        .post(localServer,newPerson)
+    return axios.post(localServer,newPerson)
         .then(response => {
-            console.log("Added new person",response)
+            console.log("Add person",response)
             return response.data
         })
         .catch(error => {
             console.log('saving to db failed')
+            throw new Error(error)
         })
+        
 }
 const updateNumber= updatePerson => {
     console.log("dbService.updateNumber",updatePerson);
@@ -23,7 +24,8 @@ const updateNumber= updatePerson => {
             return response.data
         })
         .catch(error => {
-            console.log('saving to db failed')
+            console.log('saving to db failed',error)
+            throw new Error(error.data)
         })
 }
 const loadPeople = () => {
@@ -35,6 +37,7 @@ const loadPeople = () => {
         })
         .catch(error => {
             console.log('loading people from db failed')
+            throw new Error(error.data)
          })
 }
 
@@ -42,11 +45,13 @@ const removePerson = personId => {
     console.log("dbService.removePerson", personId);
     return axios
         .delete(`${localServer}/${personId}`)
-      .then(response => {
-            console.log("deleted", response.data)
-        } )
-        .catch (error => {
-            console.log("delete failed")
+        .then(response => {
+            console.log("deleted", personId)
+            return personId
+        })
+        .catch(error => {
+            console.log("delete failed", error)
+            throw new Error(personId)
         })
 }
 
