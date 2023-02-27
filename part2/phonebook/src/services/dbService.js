@@ -1,10 +1,10 @@
 import axios from 'axios'
 
-const localServer = "http://localhost:3001/persons"
+const baseURL = "/api/persons"
 
 const savePerson = newPerson => {
     console.log("dbService.addPerson");
-    return axios.post(localServer,newPerson)
+    return axios.post(baseURL,newPerson)
         .then(response => {
             console.log("Add person",response)
             return response.data
@@ -18,7 +18,7 @@ const savePerson = newPerson => {
 const updateNumber= updatePerson => {
     console.log("dbService.updateNumber",updatePerson);
     return axios
-        .put(`${localServer}/${updatePerson.id}`,updatePerson)
+        .put(`${baseURL}/${updatePerson.id}`,updatePerson)
         .then(response => {
             console.log("Update number",response)
             return response.data
@@ -30,7 +30,7 @@ const updateNumber= updatePerson => {
 }
 const loadPeople = () => {
     console.log("dbService.loadPeople");
-    return axios.get(localServer)
+    return axios.get(baseURL)
         .then(response => {
              console.log(response)
             return response.data
@@ -44,7 +44,7 @@ const loadPeople = () => {
 const removePerson = personId => {
     console.log("dbService.removePerson", personId);
     return axios
-        .delete(`${localServer}/${personId}`)
+        .delete(`${baseURL}/${personId}`)
         .then(response => {
             console.log("deleted", personId)
             return personId

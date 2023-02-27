@@ -1,5 +1,5 @@
 
-import DeleteButton from '../../src/components/DeleteButton'
+import DeleteButton from '../components/DeleteButton'
 
 const Persons = (props) => {
     console.log("Persons Component", props)

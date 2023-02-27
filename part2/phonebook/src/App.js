@@ -29,14 +29,16 @@ const App = () => {
     setNotification({message,isError})
     setTimeout( () => setNotification({message:null,isError:false}),10000)
   }
+
   const reloadPeople = () => {
     console.log("reloadPeople from db")
     DbService.loadPeople().then( response => {
         console.log("reloadPeople db called returned", response);
         setPersons(response)
-        if(filter)
+        if(filter){
+          console.log("Filter on reload'",filter,"'");
           setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
-        else
+         } else
           setFilteredPersons(persons)
       } )
     }
@@ -75,7 +77,7 @@ const App = () => {
 
   const removePerson = (e) => {
     console.log("removePerson execution",e.target.value)
-    const p = filteredPersons.find(person => person.id==e.target.value)
+    const p = filteredPersons.find(person => person.id===Number(e.target.value))
     if(p && window.confirm(`Are you sure te remove ${p.name}?`)) {
       console.log("Ok to delete person")
       DbService.removePerson(e.target.value)
@@ -103,8 +105,10 @@ const App = () => {
   const handlePhoneChange = (e) => {
     setNewPerson({name:newPerson.name, number:e.target.value})
   }
+  console.log("Before calling reload effect", filteredPersons)
 
-  useEffect( reloadPeople ,[])
+  useEffect( reloadPeople ,[filter, persons])
+  console.log("after calling reload effect", filteredPersons)
 
   return (
     <div>
