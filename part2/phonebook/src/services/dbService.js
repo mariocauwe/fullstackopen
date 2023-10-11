@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = "/api/persons"
+const baseURL = "https://phonebook-xutl.onrender.com/api/persons"
 
 const savePerson = newPerson => {
     console.log("dbService.addPerson");

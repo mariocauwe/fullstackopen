@@ -8,10 +8,10 @@ import Status from './components/Status'
 import './style.css'
 
 const App = () => {
-  console.log("re-render");
+  console.log("render App");
 
   const [persons, setPersons] = useState([])
-  const [filteredPersons, setFilteredPersons] = useState(persons)
+  const [filteredPersons, setFilteredPersons] = useState([])
 
   const [newPerson, setNewPerson] = useState({name:'',number:''})
   
@@ -35,11 +35,13 @@ const App = () => {
     DbService.loadPeople().then( response => {
         console.log("reloadPeople db called returned", response);
         setPersons(response)
-        if(filter){
+       if(filter){
           console.log("Filter on reload'",filter,"'");
-          setFilteredPersons(persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
-         } else
-          setFilteredPersons(persons)
+          setFilteredPersons(response.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())))
+        } else
+          console.log("No filter on reload, persons=",response);
+          setFilteredPersons(response)
+          console.log("reload - filtered persons=",filteredPersons)
       } )
     }
 
@@ -66,6 +68,7 @@ const App = () => {
       DbService.savePerson(newPerson)
         .then(response => {
           updateNotification(newPerson.name + ADDSUCCESS,false)
+          setFilteredPersons(persons.concat(newPerson))
           reloadPeople()
         })
         .catch(error => {
@@ -107,7 +110,8 @@ const App = () => {
   }
   console.log("Before calling reload effect", filteredPersons)
 
-  useEffect( reloadPeople ,[filter, persons])
+ /* useEffect( reloadPeople ,[filter, persons]) */
+  useEffect( reloadPeople , [])
   console.log("after calling reload effect", filteredPersons)
 
   return (
