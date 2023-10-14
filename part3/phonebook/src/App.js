@@ -4,6 +4,7 @@ import NewPersonForm from './components/NewPersonForm'
 import Persons from './components/Persons'
 import  DbService from './services/dbService' 
 import Status from './components/Status'
+import Info from './components/Info'
 
 import './style.css'
 
@@ -12,6 +13,7 @@ const App = () => {
 
   const [persons, setPersons] = useState([])
   const [filteredPersons, setFilteredPersons] = useState([])
+  //const [amountEntries, setAmountEntries] = useState()
 
   const [newPerson, setNewPerson] = useState({name:'',number:''})
   
@@ -49,7 +51,7 @@ const App = () => {
     console.log("addPerson")
     e.preventDefault()
     if(newPerson.name.length===0) return
- 
+    
     var p = persons.find(person => person.name===newPerson.name)
     if(p) {
       if(window.confirm(`${newPerson.name} is already in the phonebook. Replace the old number?`)) {
@@ -122,7 +124,6 @@ const App = () => {
    
       <h2>Add new</h2>
       <NewPersonForm name={newPerson.name} phone={newPerson.number} nameChange={handleNameChange} phoneChange={handlePhoneChange} onSubmit={addPerson}/>
-
       <h2>Numbers</h2>
       <Persons filteredPersons={filteredPersons} removePerson={removePerson}/>
     </div>

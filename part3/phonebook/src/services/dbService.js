@@ -1,7 +1,9 @@
 import axios from 'axios'
 
-//const baseURL = "https://phonebook-xutl.onrender.com/api/persons"
-const baseURL = "http://localhost:3001/api/persons"
+const server = "http://localhost:3001"
+//const server = "https://phonebook-xutl.onrender.com"
+const infoURL = "/info"
+const baseURL = server + "/api/persons"
 
 const savePerson = newPerson => {
     console.log("dbService.addPerson");
@@ -56,4 +58,16 @@ const removePerson = personId => {
         })
 }
 
-export default {savePerson, loadPeople,removePerson,updateNumber} 
+const getInfo = () => {
+    console.log("dbService.getInfo")
+    return axios.get(`${infoURL}`)
+        .then(response => {
+            console.log(response)
+            return response;
+        })        
+        .catch(error => {
+            console.log("count retrieval faild failed", error)
+            throw new Error(error.data)
+        })
+}
+export default {savePerson, loadPeople,removePerson,updateNumber, getInfo} 
