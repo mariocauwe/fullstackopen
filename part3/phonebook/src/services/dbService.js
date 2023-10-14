@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-const server = "http://localhost:3001"
-//const server = "https://phonebook-xutl.onrender.com"
+//const server = "http://localhost:3001"
+const server = "https://phonebook-xutl.onrender.com"
 const infoURL = "/info"
 const baseURL = server + "/api/persons"
 
