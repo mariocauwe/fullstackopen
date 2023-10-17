@@ -13,10 +13,10 @@ const savePerson = newPerson => {
             return response.data
         })
         .catch(error => {
-            console.log('saving to db failed')
-            throw new Error(error)
-        })
-        
+            let str = error.response.data.content
+            console.log('dbservice.savePerson, saving to db failed',str)
+            throw new Error(str)
+        })       
 }
 const updateNumber= updatePerson => {
     console.log("dbService.updateNumber",updatePerson);
@@ -27,8 +27,9 @@ const updateNumber= updatePerson => {
             return response.data
         })
         .catch(error => {
-            console.log('saving to db failed',error)
-            throw new Error(error.data)
+            let str = error.response.data.content
+            console.log('updateNumber, saving to db failed',str)
+            throw new Error(str)
         })
 }
 const loadPeople = () => {

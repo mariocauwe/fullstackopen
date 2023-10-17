@@ -4,7 +4,6 @@ import NewPersonForm from './components/NewPersonForm'
 import Persons from './components/Persons'
 import  DbService from './services/dbService' 
 import Status from './components/Status'
-import Info from './components/Info'
 
 import './style.css'
 
@@ -13,8 +12,7 @@ const App = () => {
 
   const [persons, setPersons] = useState([])
   const [filteredPersons, setFilteredPersons] = useState([])
-  //const [amountEntries, setAmountEntries] = useState()
-
+  
   const [newPerson, setNewPerson] = useState({name:'',number:''})
   
   const [filter, setFilter] = useState('')
@@ -28,6 +26,7 @@ const App = () => {
   const REMOVEFAIL = " remove failed"
 
   const updateNotification = (message,isError) => {
+    console.log("set Notif", message)
     setNotification({message,isError})
     setTimeout( () => setNotification({message:null,isError:false}),10000)
   }
@@ -62,7 +61,8 @@ const App = () => {
           reloadPeople()
         })
       .catch( error => {
-            updateNotification(newPerson.name + UPDATEFAIL,true)
+        console.log("catch updateNumber",error)
+        updateNotification(newPerson.name + UPDATEFAIL + "<br/>" + error,true)
       })
       }
     }
@@ -74,7 +74,8 @@ const App = () => {
           reloadPeople()
         })
         .catch(error => {
-          updateNotification(newPerson.name + ADDFAIL,true)
+          console.log("catch savePerson",error)
+          updateNotification(newPerson.name + ADDFAIL + "<br/>" + error,true)
       })
     }
     setNewPerson({name:'',number:''})
@@ -110,12 +111,8 @@ const App = () => {
   const handlePhoneChange = (e) => {
     setNewPerson({name:newPerson.name, number:e.target.value})
   }
-  console.log("Before calling reload effect", filteredPersons)
-
- /* useEffect( reloadPeople ,[filter, persons]) */
   useEffect( reloadPeople , [])
-  console.log("after calling reload effect", filteredPersons)
-
+ 
   return (
     <div>
       <Status message={notification.message} isError={notification.isError} />
